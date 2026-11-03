@@ -63,7 +63,9 @@ PanelSlider {
       if (mouse.button === Qt.RightButton) root.rightClicked()
     }
     onWheel: function(wheel) {
-      var delta = wheel.angleDelta.y > 0 ? root.step : -root.step
+      // Scale by notches (120 units) and use a fifth of a drag step, so high-resolution wheels stay gentle.
+      var delta = wheel.angleDelta.y / 120 * root.step * 0.2
+      if (delta === 0) return
       var next = Math.max(root.minimum, Math.min(root.maximum, root.liveValue + delta))
       if (root.integer) next = Math.round(next)
       root.liveValue = next
