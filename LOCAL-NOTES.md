@@ -34,6 +34,29 @@ runtime/<buildId>/qml/components/AudioSlider.qml
 Keeping the top-level `qml/` identical to upstream preserves the fingerprint,
 so the bundled backend is used and the socket names match. Rust is not needed.
 
+## Git remotes
+
+The local checkout at `~/.config/omarchy/plugins/ssupt.audio-control` has two remotes:
+
+- `origin`: upstream, https://github.com/ssupt/omarchy-audio-control
+- `fork`: this fork, https://github.com/madratzz/omarchy-audio-control
+
+## Update workflow
+
+```bash
+cd ~/.config/omarchy/plugins/ssupt.audio-control
+git pull origin main          # fetch upstream changes
+# reapply the wheel tweak (see below) if runtime/ got a new build ID
+git add runtime/*/qml/components/AudioSlider.qml
+git commit -m "Reapply gentler scroll-wheel steps"
+git push fork main            # update the fork
+omarchy restart shell
+```
+
+If `git pull` conflicts on `AudioSlider.qml`, take upstream's version
+(`git checkout --theirs <file>`) and reapply the tweak by hand. Afterwards,
+`git diff origin/main -- qml/` must print nothing.
+
 ## After pulling upstream updates
 
 An update replaces `runtime/` with a new build ID directory, so reapply the
